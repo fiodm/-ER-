@@ -10,16 +10,15 @@ erDiagram
     ORDER ||--o| PAYMENT : has
 
     CUSTOMER {
-        int customer_id PK
-        string full_name
-        string email
-        string phone
-    }
+    int customer_id PK
+    string name
+    string email
+    datetime created_at
+}
 
     CATEGORY {
         int category_id PK
         string name
-        string description
     }
 
     PRODUCT {
@@ -32,7 +31,7 @@ erDiagram
     ORDER {
         int order_id PK
         int customer_id FK
-        date order_date
+        datetime created_at
         string status
     }
 
