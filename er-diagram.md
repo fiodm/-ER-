@@ -46,7 +46,7 @@ erDiagram
     PAYMENT {
         int payment_id PK
         int order_id FK
-        date payment_date
+        datetime paid_at
         decimal amount
         string status
     }
