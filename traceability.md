@@ -59,6 +59,18 @@ REQ-10 — повернення коштів.
  REQ-07                     Product, Category 
  REQ-08                     Order 
  REQ-09                     Product, OrderItem 
- REQ-10                     Payment (майбутнє розширення) 
+ REQ-10                     Payment (майбутнє розширення)
+ 
 
-Сутності відповідають ER-моделі лабораторної роботи №1. Адміністратор і платіжний сервіс є акторами сценаріїв, а не окремими сутностями поточної моделі даних.
+## 6. Узгодженість із ER-моделлю
+
+| Вимоги | Сутності ER-моделі |
+|---|---|
+| REQ-01, REQ-02 | Product, Category |
+| REQ-03, REQ-04 | Customer, Order, OrderItem, Product |
+| REQ-05, REQ-06 | Order, Payment |
+| REQ-07 | Product, Category |
+| REQ-08 | Order |
+| REQ-09 | Product, OrderItem |
+| REQ-10 | Payment (майбутнє розширення) |
+
