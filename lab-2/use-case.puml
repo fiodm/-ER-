@@ -6,7 +6,6 @@ skinparam packageStyle rectangle
 actor "Користувач" as User
 actor "Покупець" as Customer
 actor "Адміністратор" as Admin
-actor "Платіжний сервіс" as PaymentService
 
 User <|-- Customer
 User <|-- Admin
@@ -18,19 +17,18 @@ rectangle "Онлайн-магазин" {
   usecase "Оплатити замовлення" as UC04
   usecase "Додати товар" as UC05
   usecase "Оновити статус замовлення" as UC06
+  usecase "Завершити покупку" as UC07
 }
 
 User --> UC01
-User --> UC02
-
 Customer --> UC03
 Customer --> UC04
-
+Customer --> UC07
 Admin --> UC05
 Admin --> UC06
 
-PaymentService --> UC04
-
 UC02 ..> UC01 : <<extend>>
+UC07 ..> UC03 : <<include>>
+UC07 ..> UC04 : <<include>>
 
 @enduml
