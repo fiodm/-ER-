@@ -1,0 +1,41 @@
+
+@startuml
+title UC04 — Повторне підтвердження платежу
+
+participant "Зовнішній платіжний сервіс" as Gateway
+participant "Сервіс оплати" as PaymentService
+database "База даних PostgreSQL" as DB
+
+Gateway -> PaymentService: paymentCallback(orderId, success, signature)
+activate PaymentService
+
+PaymentService -> PaymentService: verifySignature(signature)
+
+alt Підпис недійсний
+    PaymentService --> Gateway: HTTP 401 Unauthorized
+else Підпис підтверджено
+    PaymentService -> DB: getOrderAndPayment(orderId)
+    activate DB
+    DB --> PaymentService: Order(status=paid), Payment(status=success)
+    deactivate DB
+
+    alt Платіж уже успішно оброблено
+        PaymentService -> DB: confirmPaymentUnchanged(orderId)
+        activate DB
+        DB --> PaymentService: Один Payment, Order.status=paid
+        deactivate DB
+
+        PaymentService --> Gateway: HTTP 200 OK
+    else Результат ще не оброблено
+        PaymentService -> DB: savePaymentAndMarkPaid(orderId, success)
+        activate DB
+        DB --> PaymentService: Payment(status=success), Order(status=paid)
+        deactivate DB
+
+        PaymentService --> Gateway: HTTP 200 OK
+    end
+end
+
+deactivate PaymentService
+
+@enduml
