@@ -1,0 +1,38 @@
+
+@startuml
+title UC04 — Спроба повторної оплати сплаченого замовлення
+
+actor "Покупець" as Customer
+participant "Вебінтерфейс" as UI
+participant "Сервіс оплати" as PaymentService
+database "База даних PostgreSQL" as DB
+participant "Зовнішній платіжний сервіс" as Gateway
+
+Customer -> UI: initiatePayment(orderId)
+activate UI
+
+UI -> PaymentService: initiatePayment(orderId)
+activate PaymentService
+
+PaymentService -> DB: getOrderAndPayment(orderId)
+activate DB
+DB --> PaymentService: Order(status=paid), Payment(status=success)
+deactivate DB
+
+alt Order.status == paid
+    PaymentService --> UI: paymentRejected("Already paid")
+    UI --> Customer: Замовлення вже оплачено
+else Order.status == pending і оплата дозволена
+    PaymentService -> Gateway: createPayment(orderId, amount)
+    activate Gateway
+    Gateway --> PaymentService: paymentUrl
+    deactivate Gateway
+
+    PaymentService --> UI: paymentUrl
+    UI --> Customer: Перехід до оплати
+end
+
+deactivate PaymentService
+deactivate UI
+
+@enduml
