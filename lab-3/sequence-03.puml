@@ -1,0 +1,45 @@
+
+@startuml
+title UC04 — Відмова платежу
+
+participant "Зовнішній платіжний сервіс" as Gateway
+participant "Сервіс оплати" as PaymentService
+database "База даних PostgreSQL" as DB
+participant "Сервіс сповіщень" as NotificationService
+actor "Покупець" as Customer
+
+Gateway -> PaymentService: paymentCallback(orderId, failed, signature)
+activate PaymentService
+
+PaymentService -> PaymentService: verifySignature(signature)
+
+alt Підпис підтверджено
+    PaymentService -> DB: getOrderAndPayment(orderId)
+    activate DB
+    DB --> PaymentService: Order(status=pending), Payment?
+    deactivate DB
+
+    alt Order.status == pending
+        PaymentService -> DB: saveFailedPayment(orderId)
+        activate DB
+        DB --> PaymentService: Payment(status=failed), Order(status=pending)
+        deactivate DB
+
+        PaymentService -> NotificationService: notifyPaymentFailed(orderId)
+        activate NotificationService
+        NotificationService -> Customer: Повідомлення про невдалу оплату
+        Customer --> NotificationService: Повідомлення отримано
+        NotificationService --> PaymentService: notificationSent
+        deactivate NotificationService
+
+        PaymentService --> Gateway: HTTP 200 OK
+    else Замовлення не очікує оплати
+        PaymentService --> Gateway: HTTP 409 Conflict
+    end
+else Підпис недійсний
+    PaymentService --> Gateway: HTTP 401 Unauthorized
+end
+
+deactivate PaymentService
+
+@enduml
