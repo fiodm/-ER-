@@ -21,6 +21,7 @@ rectangle "Онлайн-магазин" {
 }
 
 User --> UC01
+User --> UC02
 Customer --> UC03
 Customer --> UC04
 Customer --> UC07
