@@ -16,7 +16,7 @@ alt Підпис недійсний
 else Підпис підтверджено
     PaymentService -> DB: getOrderAndPayment(orderId)
     activate DB
-    DB --> PaymentService: Order(status=paid), Payment(status=success)
+ DB --> PaymentService: Order(status), Payment(status)
     deactivate DB
 
     alt Платіж уже успішно оброблено
