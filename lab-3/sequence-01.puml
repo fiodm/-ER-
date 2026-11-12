@@ -14,12 +14,12 @@ activate UI
 UI -> PaymentService: initiatePayment(orderId)
 activate PaymentService
 
-PaymentService -> DB: getOrderWithItems(orderId)
+PaymentService -> DB: getOrderWithItemsAndPayment(orderId)
 activate DB
-DB --> PaymentService: Order, OrderItem[]
+DB --> PaymentService: Order, OrderItem[], Payment?
 deactivate DB
 
-alt Order.status == pending і оплата дозволена
+alt Order.status == pending і (Payment відсутній або failed)
     PaymentService -> PaymentService: calculateTotal(quantity * unit_price)
 
     PaymentService -> Gateway: createPayment(orderId, amount)
