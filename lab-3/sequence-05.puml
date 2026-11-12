@@ -23,6 +23,11 @@ alt Order.status == paid
     PaymentService --> UI: paymentRejected("Already paid")
     UI --> Customer: Замовлення вже оплачено
 else Order.status == pending і оплата дозволена
+    PaymentService -> DB: getOrderItems(orderId)
+    activate DB
+    DB --> PaymentService: OrderItem[]
+    deactivate DB
+    PaymentService -> PaymentService: calculateTotal(quantity * unit_price)
     PaymentService -> Gateway: createPayment(orderId, amount)
     activate Gateway
     Gateway --> PaymentService: paymentUrl
