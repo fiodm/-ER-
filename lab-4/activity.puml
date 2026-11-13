@@ -17,15 +17,15 @@ else (ні)
   |Система онлайн-магазину|
   if (Order.status == pending та Payment відсутній або failed?) then (так)
     :Розрахувати суму за OrderItem;
-    :Надіслати createPayment(orderId, amount);
+   :createPayment(orderId, amount)>;
 
     |Зовнішній платіжний сервіс|
     :Прийняти createPayment;
     :Створити платіжне посилання;
-    :Надіслати paymentUrl;
+  :paymentUrl>;
 
     |Система онлайн-магазину|
-    :Отримати paymentUrl;
+    :paymentUrl<;
 
     |Покупець|
     :Перейти за посиланням;
@@ -33,10 +33,10 @@ else (ні)
 
     |Зовнішній платіжний сервіс|
     if (Callback надіслано?) then (так)
-      :Надіслати сигнал paymentCallback;
+      :paymentCallback>;
 
       |Система онлайн-магазину|
-      :Прийняти подію paymentCallback;
+      :paymentCallback<;
       :Перевірити підпис;
 
       if (Підпис дійсний?) then (так)
